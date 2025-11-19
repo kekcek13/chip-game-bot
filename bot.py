@@ -1,15 +1,39 @@
 import logging
 import random
-from typing import List, Dict, Optional
+import os
+from typing import List, Dict
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# ⚠️ ЗАМЕНИТЕ НА ВАШ ТОКЕН ОТ BOTFATHER ⚠️
-BOT_TOKEN = "8552553606:AAGnbS0XtD-kIf3dN4K2kFgqZW3hm5CT0rc"
+# Загрузка токена из переменных окружения или .env файла
+def load_bot_token():
+    # Сначала пробуем получить из переменных окружения (для Render)
+    token = os.environ.get('BOT_TOKEN')
+    
+    if token:
+        return token
+    
+    # Если нет в переменных окружения, пробуем прочитать из .env файла
+    try:
+        with open('.env', 'r') as f:
+            for line in f:
+                if line.startswith('BOT_TOKEN='):
+                    return line.split('=', 1)[1].strip()
+    except FileNotFoundError:
+        pass
+    
+    # Если ничего не нашли, используем запасной вариант
+    return "8552553606:AAGnbS0XtD-kIf3dN4K2kFgqZW3hm5CT0rc"
 
+BOT_TOKEN = load_bot_token()
+
+# Проверка токена
+if BOT_TOKEN == "8552553606:AAGnbS0XtD-kIf3dN4K2kFgqZW3hm5CT0rc":
+    print("❌ ВНИМАНИЕ: Токен бота не настроен!")
+    print("Добавьте BOT_TOKEN в .env файл или переменные окружения")
 # Хранилище игр
 active_games = {}
 
@@ -555,3 +579,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
