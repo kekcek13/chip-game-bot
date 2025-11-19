@@ -5,6 +5,19 @@ from typing import List, Dict
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
+# Обход отсутствия imghdr в новых версиях Python
+import sys
+if sys.version_info >= (3, 13):
+    import PIL.Image as Image
+    def imghdr_what(file):
+        try:
+            with Image.open(file) as img:
+                return img.format.lower()
+        except:
+            return None
+    import telegram.files.inputfile
+    telegram.files.inputfile.imghdr.what = imghdr_what
+
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
@@ -579,4 +592,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
